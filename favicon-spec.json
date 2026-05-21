@@ -1,0 +1,41 @@
+{
+  "size": 128,
+  "background": {
+    "type": "gradient",
+    "from": "#101216",
+    "to": "#000000"
+  },
+  "plate": {
+    "color": "#181c22",
+    "radius": 22,
+    "inset": 8
+  },
+  "layers": [
+    {
+      "type": "rrect",
+      "x": 25,
+      "y": 38,
+      "w": 42,
+      "h": 42,
+      "radius": 10,
+      "color": "#7be7ff"
+    },
+    {
+      "type": "rrect",
+      "x": 60,
+      "y": 48,
+      "w": 42,
+      "h": 42,
+      "radius": 10,
+      "color": "#5dffb1"
+    },
+    {
+      "type": "ring",
+      "cx": 64,
+      "cy": 64,
+      "r": 48,
+      "width": 3,
+      "color": "#ffffff"
+    }
+  ]
+}

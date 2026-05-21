@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=600, height=600, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#000000">
+  <title>RayBanProxy</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main id="app" aria-label="RayBanProxy label selector">
+    <section class="proxy-stage">
+      <div class="proxy-viewport">
+        <div id="proxy-strip" class="proxy-strip" role="listbox" aria-label="RayBanProxy labels"></div>
+      </div>
+    </section>
+    <nav id="filter-bar" class="filter-bar" aria-label="Filters" hidden>
+      <button type="button" class="filter-pill focusable is-cleared" data-filter="type" tabindex="0">
+        <span class="filter-name">Type</span>
+        <span class="filter-value">Type</span>
+      </button>
+      <button type="button" class="filter-pill focusable is-active is-cleared" data-filter="color" tabindex="0">
+        <span class="filter-name">Color</span>
+        <span class="filter-value">Color</span>
+      </button>
+      <button type="button" class="filter-pill focusable is-cleared" data-filter="topic" tabindex="0">
+        <span class="filter-name">Topic</span>
+        <span class="filter-value">Topic</span>
+      </button>
+    </nav>
+    <div id="status" class="sr-only" aria-live="polite">item0 selected</div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
