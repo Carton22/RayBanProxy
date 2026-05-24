@@ -7,10 +7,10 @@
   --text: #ffffff;
   --shadow: rgba(0, 0, 0, 0.46);
   --radius: 22px;
-  --card-gap: 24px;
-  --card-side-w: 248px;
+  --card-gap: 16px;
+  --card-side-w: 132px;
   --card-side-h: 460px;
-  --card-center-w: 340px;
+  --card-center-w: 220px;
   --card-center-h: 560px;
   --filter-slot: 0px;
   --layout-gap: 0px;
@@ -54,9 +54,10 @@ button {
 #app.filters-open {
   --filter-slot: 72px;
   --layout-gap: 16px;
-  --card-side-w: 216px;
+  --card-gap: 14px;
+  --card-side-w: 112px;
   --card-side-h: 388px;
-  --card-center-w: 296px;
+  --card-center-w: 176px;
   --card-center-h: 448px;
 }
 
@@ -184,7 +185,7 @@ button {
   flex: 0 0 auto;
   width: var(--card-side-w);
   height: var(--card-side-h);
-  padding: 10px 10px 12px;
+  padding: 8px 8px 10px;
   border-radius: var(--radius);
   background: var(--idle);
   color: var(--text);
@@ -192,7 +193,7 @@ button {
   flex-direction: column;
   align-items: stretch;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 8px;
   opacity: 0.78;
   transform: scale(0.92);
   box-shadow: inset 0 0 0 2px var(--idle-edge), 0 18px 36px var(--shadow);
@@ -236,7 +237,7 @@ button {
 
 .proxy-card.is-focused.show-price {
   justify-content: flex-start;
-  padding: 14px 14px 12px;
+  padding: 12px 12px 10px;
   gap: 8px;
   box-shadow:
     inset 0 0 0 2px rgba(255, 140, 140, 0.4),
@@ -279,7 +280,7 @@ button {
 }
 
 .proxy-price {
-  font-size: 80px;
+  font-size: 64px;
   font-weight: 800;
   line-height: 1;
   color: #ffffff;
@@ -290,11 +291,11 @@ button {
 }
 
 .proxy-card.is-focused.show-price .proxy-price {
-  font-size: 96px;
+  font-size: 72px;
 }
 
 .proxy-card.show-price:not(.is-focused) .proxy-price {
-  font-size: 40px;
+  font-size: 34px;
 }
 
 #app.filters-open .proxy-card.is-focused.show-price .proxy-price {
@@ -337,7 +338,7 @@ button {
   align-items: center;
   justify-content: center;
   color: var(--text);
-  font-size: 22px;
+  font-size: 18px;
   line-height: 1;
   font-weight: 800;
   letter-spacing: 0;
@@ -345,7 +346,7 @@ button {
 }
 
 .proxy-card.is-focused .proxy-label {
-  font-size: 24px;
+  font-size: 22px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
