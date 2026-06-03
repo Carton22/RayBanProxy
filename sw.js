@@ -1,4 +1,4 @@
-var CACHE_NAME = "rayban-proxy-v4";
+var CACHE_NAME = "rayban-proxy-v5";
 var CACHE_URLS = [
   "./",
   "./index.html",
