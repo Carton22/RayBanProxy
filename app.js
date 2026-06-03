@@ -48,7 +48,7 @@
     for (var i = 0; i < BOOKSHELF_COUNT; i++) {
       labels.push({
         name: "item" + i,
-        image: "Bookshelf/" + i + ".png",
+        image: "Bookshelf/" + i + ".jpg",
         price: itemPrice(i)
       });
     }
@@ -414,7 +414,7 @@
 
       card.innerHTML =
         '<span class="proxy-image-frame">' +
-          '<img class="proxy-image" alt="" src="' + proxyImage(item, index) + '">' +
+          '<img class="proxy-image" alt="" data-src="' + proxyImage(item, index) + '" decoding="async">' +
           '<span class="proxy-price-overlay" aria-hidden="true">' +
             '<span class="proxy-price">' + formatPrice(item.price) + "</span>" +
           "</span>" +
@@ -430,7 +430,23 @@
     });
   }
 
+  function ensureNearbyImagesLoaded() {
+    var visible = getVisibleIndices();
+    var position = visible.indexOf(state.selectedIndex);
+    if (position === -1) position = 0;
+
+    visible.forEach(function(itemIndex, visibleIndex) {
+      if (Math.abs(visibleIndex - position) > 3) return;
+
+      var image = strip.querySelector('.proxy-card[data-index="' + itemIndex + '"] .proxy-image');
+      if (!image || image.src) return;
+      image.src = image.dataset.src;
+    });
+  }
+
   function updateSelection() {
+    ensureNearbyImagesLoaded();
+
     var cards = strip.querySelectorAll(".proxy-card");
     cards.forEach(function(card, index) {
       var focused = index === state.selectedIndex;
