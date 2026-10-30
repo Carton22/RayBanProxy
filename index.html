@@ -2,18 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=600, height=600, initial-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#000000">
-  <title>RayBanProxy</title>
+  <title>uistdemo</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main id="app" aria-label="RayBanProxy label selector">
+  <main id="app" aria-label="uistdemo label selector">
     <section class="proxy-stage">
       <div class="proxy-viewport">
-        <div id="proxy-strip" class="proxy-strip" role="listbox" aria-label="RayBanProxy labels"></div>
+        <div id="empty-state" class="empty-state" hidden><p>No matching items</p><small>Change a filter or reset to see all 10 objects.</small><button type="button" data-reset>Reset filters</button></div>
+        <div id="proxy-strip" class="proxy-strip" role="listbox" aria-label="uistdemo labels"></div>
       </div>
     </section>
     <nav id="filter-bar" class="filter-bar" aria-label="Filters" hidden>
@@ -30,9 +31,19 @@
         <span class="filter-value">Topic</span>
       </button>
     </nav>
-    <div id="status" class="sr-only" aria-live="polite">item0 selected</div>
+    <div id="status" class="sr-only" aria-live="polite">item1 focused</div>
   </main>
 
+  <aside class="preview-controls" aria-label="Preview controls">
+    <span class="preview-title">uistdemo</span>
+    <button type="button" id="preview-prev" aria-label="Previous item">←</button>
+    <button type="button" id="preview-next" aria-label="Next item">→</button>
+    <button type="button" id="preview-filters">Filters ↓</button>
+    <button type="button" data-reset>Reset</button>
+    <a href="review.html">Item attributes ↗</a>
+    <small>← → move · Enter select · ↓ filters · ↑ back</small>
+  </aside>
+  <script src="catalog.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

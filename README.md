@@ -1,41 +1,53 @@
-# RayBanProxy
+# uistdemo
 
-A Meta Ray-Ban Display web app that shows proxy label cards in a full-frame carousel. Each label uses a `Bookshelf/` spine image (25 items, `0.png`–`24.png`). The selected label is the large center card; neighboring labels peek in from the left and right edges.
+UIST demo version of RayBanProxy, using ten supplied object images and the approved attribute assignments.
 
-## Controls
+Live app: https://uistdemo.vercel.app/
 
-- Click or Enter on a proxy label: toggle price selection (red card, white price, item name shown)
-- Selected items stay selected when you scroll to others; multiple items can be selected
-- D-pad left/right (proxy labels): move focus without clearing other selections
-- Escape: clear all selections
-- D-pad down (proxy labels): show filter bar (Type, Color, Topic)
-- D-pad up (filter bar): hide filter bar
-- D-pad left/right (filter bar): move between filters
-- Enter or click active filter pill: cycle values (attribute name = no filter)
-  - **Type:** Type → Book → File → Box → Type …
-  - **Color:** Color → Yellow → Black → White → Color …
-  - **Topic:** Topic → XR → History → HCI → Topic …
-- Escape (proxy labels): jump to first visible item
-- Escape (filter bar): hide filter bar
+Item assignments: https://uistdemo.vercel.app/review.html
 
-Filter-to-item mappings live in `FILTER_MAPPINGS` inside `app.js`. Until those are filled in, all 25 items stay visible while values still cycle on the filter bar.
+## Run locally
 
-## Files
+Requires Node.js. No dependencies or build step are needed.
 
-- `index.html`: fixed 600 x 600 app shell
-- `styles.css`: additive-display proxy label cards
-- `app.js`: carousel positioning and D-pad/Neural Band input
-- `sw.js`: offline cache for static assets
-- `server.js`, `package.json`, `vercel.json`: Vercel-compatible static hosting
-
-## Local Test
-
-```bash
+```sh
 npm start
 ```
 
-Then open `http://localhost:3000`.
+Open http://localhost:4310/. Use `PORT=3000 npm start` to choose a different port.
 
-## Glasses Test
+```sh
+npm test
+```
 
-Meta Display Glasses need a public HTTPS URL. This app is already structured for Vercel preview or production hosting.
+## Controls
+
+- Left/right: move between objects, or choose a filter when filters are open.
+- Enter/click object: toggle selection and the inherited sample price.
+- Down: open filters. Up: hide filters.
+- Enter/click filter: cycle its values; the attribute name means no filter.
+- Escape: clear selections and focus the first visible object, or hide filters.
+- Filters combine with AND. Empty combinations show a reset button.
+
+The display retains the 600 × 600 layout and scales down for smaller viewports. Desktop preview controls appear below the canvas when the viewport is at least 680 pixels tall.
+
+## Attributes
+
+- Type: Book, Pen, Box
+- Color: Yellow, Black, Green, Red
+- Topic: Art, CS
+
+`catalog.js` supplies the carousel and the review page. `items/item1.png` through `items/item10.png` are the unchanged supplied images. Binders count as Book. The beige Ray-Ban box is assigned Yellow/CS; the magnet box is Red/Art. These assignments were approved for this demo. Prices are sample values inherited from the reference.
+
+## Deployment
+
+This branch uses the repository's root-level static app layout. Its app files match the verified Vercel deployment. Existing Bookshelf assets and the old service worker remain as historical source assets and are excluded from deployment; uistdemo uses only `items/` and does not register a service worker.
+
+To redeploy, link this checkout to the existing Vercel project `uistdemo` in `liu03008-9488s-projects` and run:
+
+```sh
+vercel link --yes --project uistdemo --scope liu03008-9488s-projects
+vercel deploy --prod --yes --scope liu03008-9488s-projects
+```
+
+Vercel account metadata and credentials are not tracked. This branch does not change the original RayBanProxy project or its deployment.

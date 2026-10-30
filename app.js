@@ -1,67 +1,46 @@
 (function() {
   "use strict";
 
-  var BOOKSHELF_COUNT = 25;
-
-  var FALLBACK_COLORS = [
-    ["#f4df2e", "#25282b", "#d9dad8"],
-    ["#dcdedc", "#efefea", "#a8adb2"],
-    ["#24272b", "#313942", "#b8b09a"],
-    ["#222529", "#f0ca35", "#8e9499"],
-    ["#e9eaec", "#16191d", "#d34f44"],
-    ["#385a79", "#e0d27b", "#f2f2ee"],
-    ["#77b6c8", "#1e2228", "#f6f0d4"],
-    ["#efe7c8", "#363a40", "#f0b24b"]
-  ];
-
-  var FILTER_DEFS = {
-    type: { label: "Type", values: ["Book", "File", "Box"] },
-    color: { label: "Color", values: ["Yellow", "Black", "White"] },
-    topic: { label: "Topic", values: ["XR", "History", "HCI"] }
-  };
-
-  // Each value maps to bookshelf item indices (0-24).
-  var FILTER_MAPPINGS = {
-    type: {
-      Book: [3, 4, 7, 8, 12, 13, 15, 16, 17, 18, 22, 23],
-      File: [0, 1, 2, 6, 9, 10, 14, 19, 20, 21],
-      Box: [5, 11, 24]
-    },
-    color: {
-      Yellow: [0, 6, 21],
-      Black: [1, 11, 20, 22],
-      White: [2, 7, 8, 12, 14, 15, 24]
-    },
-    topic: {
-      XR: [3, 15],
-      History: [4, 16],
-      HCI: [7, 17]
-    }
-  };
-
-  function itemPrice(index) {
-    return 10 + ((index * 13 + 7) % 41);
-  }
-
-  function buildBookshelfLabels() {
-    var labels = [];
-    for (var i = 0; i < BOOKSHELF_COUNT; i++) {
-      labels.push({
-        name: "item" + i,
-        image: "Bookshelf/" + i + ".jpg",
-        price: itemPrice(i)
-      });
-    }
-    return labels;
-  }
+  var FILTER_DEFS = UISTCatalog.filters;
+  var FILTER_MAPPINGS = {};
+  Object.keys(FILTER_DEFS).forEach(function(key) {
+    FILTER_MAPPINGS[key] = {};
+    FILTER_DEFS[key].values.forEach(function(value) {
+      FILTER_MAPPINGS[key][value] = UISTCatalog.items.reduce(function(indices, item, index) {
+        if (item[key] === value) indices.push(index);
+        return indices;
+      }, []);
+    });
+  });
 
   function formatPrice(amount) {
     return "$" + amount;
   }
 
+  function formatActivatedDetails(label) {
+    return formatPrice(label.price) + (label.author ? ", " + label.author : "");
+  }
+
+  function escapeHTML(value) {
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function formatActivatedMarkup(label) {
+    var markup = '<span class="proxy-price">' + escapeHTML(formatPrice(label.price)) + "</span>";
+    if (label.author) {
+      markup += '<span class="proxy-author">' + escapeHTML(label.author) + "</span>";
+    }
+    return markup;
+  }
+
   var CONFIG = {
     inputRepeatMs: 115,
-    labels: buildBookshelfLabels(),
+    labels: UISTCatalog.items,
     filterKeys: ["type", "color", "topic"]
   };
 
@@ -152,36 +131,10 @@
     for (i = 0; i < CONFIG.labels.length; i++) {
       if (isItemVisible(i)) indices.push(i);
     }
-    if (!indices.length) {
-      for (i = 0; i < CONFIG.labels.length; i++) indices.push(i);
-    }
     return indices;
   }
 
-  function encodeSvg(svg) {
-    return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
-  }
-
-  function proxyImage(label, index) {
-    if (label.image) return label.image;
-
-    var colors = label.colors || FALLBACK_COLORS[index % FALLBACK_COLORS.length];
-    var shade = index % 2 === 0 ? "#11161a" : "#20252a";
-    var accent = colors[0];
-    var svg =
-      '<svg xmlns="http://www.w3.org/2000/svg" width="280" height="420" viewBox="0 0 280 420">' +
-      '<rect width="280" height="420" rx="14" fill="' + shade + '"/>' +
-      '<rect x="24" y="28" width="232" height="364" rx="8" fill="#0b0d10"/>' +
-      '<rect x="36" y="40" width="36" height="340" rx="4" fill="' + colors[0] + '"/>' +
-      '<rect x="78" y="40" width="34" height="340" rx="4" fill="' + colors[1] + '"/>' +
-      '<rect x="118" y="40" width="32" height="340" rx="4" fill="' + colors[2] + '"/>' +
-      '<rect x="156" y="40" width="88" height="340" rx="4" fill="#2c3034"/>' +
-      '<rect x="24" y="28" width="232" height="364" rx="8" fill="none" stroke="#3a4046" stroke-width="4"/>' +
-      '<circle cx="220" cy="58" r="14" fill="' + accent + '" opacity="0.55"/>' +
-      "</svg>";
-
-    return encodeSvg(svg);
-  }
+  function proxyImage(label) { return label.image; }
 
   function renderFilterLabels() {
     filterButtons.forEach(function(button) {
@@ -220,12 +173,13 @@
     }
 
     var label = CONFIG.labels[state.selectedIndex];
+    if (!label) { status.textContent = "No matching items. Change or reset filters."; return; }
     var activatedCount = getActivatedIndices().length;
     if (isItemActivated(state.selectedIndex)) {
       status.textContent =
         label.name +
         " focused, " +
-        formatPrice(label.price) +
+        formatActivatedDetails(label) +
         (activatedCount > 1 ? ", " + activatedCount + " selected" : "");
       return;
     }
@@ -259,7 +213,7 @@
   }
 
   function toggleItemActivate(index) {
-    if (!isItemVisible(index)) return;
+    if (!CONFIG.labels[index] || !isItemVisible(index)) return;
 
     state.selectedIndex = index;
 
@@ -273,7 +227,7 @@
   }
 
   function selectItem(index) {
-    if (!isItemVisible(index)) return;
+    if (!CONFIG.labels[index] || !isItemVisible(index)) return;
     state.selectedIndex = index;
     updateSelection();
   }
@@ -378,8 +332,9 @@
     });
 
     if (visible.indexOf(state.selectedIndex) === -1) {
-      state.selectedIndex = visible[0];
+      state.selectedIndex = visible.length ? visible[0] : -1;
     }
+    document.getElementById("empty-state").hidden = visible.length > 0;
 
     Object.keys(state.activated).forEach(function(key) {
       var index = parseInt(key, 10);
@@ -411,12 +366,14 @@
       card.setAttribute("aria-selected", "false");
       card.setAttribute("aria-label", item.name);
       card.dataset.index = String(index);
+      card.title = item.description + " · " + item.type + " · " + item.color + " · " + item.topic;
+      card.tabIndex = -1;
 
       card.innerHTML =
         '<span class="proxy-image-frame">' +
           '<img class="proxy-image" alt="" data-src="' + proxyImage(item, index) + '" decoding="async">' +
           '<span class="proxy-price-overlay" aria-hidden="true">' +
-            '<span class="proxy-price">' + formatPrice(item.price) + "</span>" +
+            formatActivatedMarkup(item) +
           "</span>" +
         "</span>" +
         '<span class="proxy-label">' + item.name + "</span>";
@@ -454,6 +411,7 @@
       card.classList.toggle("is-focused", focused);
       card.classList.toggle("show-price", activated);
       card.setAttribute("aria-selected", focused ? "true" : "false");
+      card.tabIndex = focused && state.panel === "proxy" ? 0 : -1;
     });
 
     updateStatus();
@@ -470,6 +428,7 @@
     if (now - state.lastInputAt < CONFIG.inputRepeatMs) return;
 
     var visible = getVisibleIndices();
+    if (!visible.length) return;
     var position = visible.indexOf(state.selectedIndex);
     if (position === -1) position = 0;
 
@@ -500,18 +459,15 @@
     filterButtons.forEach(function(button, index) {
       button.addEventListener("click", function() {
         showFilters();
-        if (state.filterIndex === index && state.panel === "filters") {
-          cycleActiveFilterValue();
-          return;
-        }
         state.filterIndex = index;
-        updateFilterFocus();
+        cycleActiveFilterValue();
       });
     });
   }
 
   function setupInput() {
     document.addEventListener("keydown", function(event) {
+      if (event.target.closest(".preview-controls, [data-reset]") && (event.key === "Enter" || event.key === " ")) return;
       if (state.panel === "proxy") {
         switch (event.key) {
           case "ArrowLeft":
@@ -569,12 +525,6 @@
     applyFilters();
   }
 
-  function registerServiceWorker() {
-    if ("serviceWorker" in navigator && window.location.protocol !== "file:") {
-      navigator.serviceWorker.register("sw.js").catch(function() {});
-    }
-  }
-
   function setupLayoutSync() {
     var proxyStage = document.querySelector(".proxy-stage");
 
@@ -604,7 +554,23 @@
     setupLayoutSync();
     render();
     setupInput();
-    registerServiceWorker();
+    document.querySelectorAll("[data-reset]").forEach(function(button) {
+      button.addEventListener("click", function() {
+        CONFIG.filterKeys.forEach(function(key) { state.filterValueIndex[key] = 0; });
+        renderFilterLabels(); applyFilters();
+      });
+    });
+    document.getElementById("preview-filters").addEventListener("click", function() {
+      if (state.panel === "filters") hideFilters(); else showFilters();
+    });
+    document.getElementById("preview-prev").addEventListener("click", function() { hideFilters(); moveSelection(-1); });
+    document.getElementById("preview-next").addEventListener("click", function() { hideFilters(); moveSelection(1); });
+    function fitDisplay() {
+      var scale = Math.min(1, window.innerWidth / 600, window.innerHeight / 600);
+      document.documentElement.style.setProperty("--display-scale", scale);
+    }
+    fitDisplay();
+    window.addEventListener("resize", fitDisplay);
     window.addEventListener("load", schedulePositionStrip);
   }
 

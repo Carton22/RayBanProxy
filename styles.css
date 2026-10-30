@@ -22,12 +22,13 @@
 
 html,
 body {
-  width: 600px;
-  height: 600px;
+  width: 100%;
+  height: 100%;
   margin: 0;
   overflow: hidden;
   background: var(--bg);
   color: var(--text);
+  --display-scale: 1;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
@@ -41,6 +42,8 @@ button {
 }
 
 #app {
+  transform: scale(var(--display-scale));
+  transform-origin: top left;
   width: 600px;
   height: 600px;
   padding: 8px;
@@ -260,8 +263,11 @@ button {
   position: absolute;
   inset: 0;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 8px;
+  text-align: center;
   border-radius: 12px;
   border: 3px solid rgba(0, 0, 0, 0.88);
   background: rgba(0, 0, 0, 0.12);
@@ -306,6 +312,33 @@ button {
   font-size: 32px;
 }
 
+.proxy-author {
+  max-width: 92%;
+  font-size: 28px;
+  font-weight: 750;
+  line-height: 1.05;
+  color: #ffffff;
+  text-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.88),
+    0 8px 24px rgba(0, 0, 0, 0.72);
+}
+
+.proxy-card.is-focused.show-price .proxy-author {
+  font-size: 32px;
+}
+
+.proxy-card.show-price:not(.is-focused) .proxy-author {
+  font-size: 16px;
+}
+
+#app.filters-open .proxy-card.is-focused.show-price .proxy-author {
+  font-size: 34px;
+}
+
+#app.filters-open .proxy-card.show-price:not(.is-focused) .proxy-author {
+  font-size: 15px;
+}
+
 .proxy-card.show-price .proxy-label {
   color: #ffffff;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
@@ -320,7 +353,7 @@ button {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .proxy-card:not(.is-focused):not(.show-price) .proxy-image {
@@ -335,8 +368,11 @@ button {
   flex: 0 0 auto;
   min-height: 32px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 8px;
+  text-align: center;
   color: var(--text);
   font-size: 18px;
   line-height: 1;
@@ -361,3 +397,17 @@ button {
   white-space: nowrap;
   border: 0;
 }
+
+.filter-bar[hidden], .empty-state[hidden] { display: none; }
+.empty-state { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; background: #000; text-align: center; }
+.empty-state p { font-size: 30px; margin: 0; font-weight: 700; }
+.empty-state small { font-size: 18px; color: #b4c6ce; }
+.empty-state button { padding: 14px 24px; border-radius: 30px; background: var(--selected); color: #07151a; cursor: pointer; }
+.preview-controls { position: fixed; top: calc(600px * var(--display-scale) + 22px); left: 24px; width: min(552px, calc(100vw - 48px)); display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: #afbec4; font-size: 13px; }
+.preview-title { font-size: 15px; font-weight: 700; color: #e7f3f6; margin-right: auto; }
+.preview-controls button { padding: 8px 11px; border: 1px solid #3e4c53; border-radius: 8px; color: #c4d8e1; background: #11191e; cursor: pointer; }
+.preview-controls a { color: #aee6f4; padding: 8px; }
+.preview-controls small { width: 100%; margin-top: 4px; color: #80929a; text-align: center; }
+button:focus-visible, a:focus-visible { outline: 2px solid #aee6f4; outline-offset: 3px; }
+@media (max-height: 679px) { .preview-controls { display: none; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }

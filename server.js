@@ -2,7 +2,8 @@ var http = require("http");
 var fs = require("fs");
 var path = require("path");
 
-var PORT = process.env.PORT || 3000;
+var PORT = process.env.PORT || 4310;
+var ROOT = __dirname;
 
 var mimeTypes = {
   ".html": "text/html",
@@ -18,13 +19,13 @@ var mimeTypes = {
 function safePath(requestUrl) {
   var cleanUrl = requestUrl.split("?")[0].split("#")[0];
   var filePath = cleanUrl === "/" ? "/index.html" : cleanUrl;
-  return path.join(__dirname, path.normalize(filePath));
+  return path.join(ROOT, path.normalize(filePath));
 }
 
 var server = http.createServer(function(req, res) {
   var filePath = safePath(req.url);
 
-  if (filePath.indexOf(__dirname) !== 0) {
+  if (!filePath.startsWith(ROOT + path.sep)) {
     res.writeHead(403, { "Content-Type": "text/plain" });
     res.end("Forbidden");
     return;
